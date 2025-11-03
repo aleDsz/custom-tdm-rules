@@ -243,7 +243,12 @@ function createScoreboard() {
     mod.Message(mod.stringkeys.SCOREBOARD_COLUMN4_HEADER),
     mod.Message(mod.stringkeys.SCOREBOARD_COLUMN5_HEADER)
   );
-  updateScoreboardHeader();
+
+  mod.SetScoreboardHeader(
+    mod.Message(mod.stringkeys.UISCORE_TEAM1_NAME),
+    mod.Message(mod.stringkeys.UISCORE_TEAM2_NAME)
+  );
+
   mod.SetScoreboardColumnWidths(100, 100, 100, 250, 250);
   // BUG
   // scoreboard sorting using the two parameter overload is 0-based index but documented as 1-based index
@@ -256,16 +261,6 @@ function createScoreboard() {
     const playerId = mod.GetObjId(player);
     updateScoreboard(player, playersStats[playerId]);
   }
-}
-
-function updateScoreboardHeader() {
-  const team1Score = mod.GetGameModeScore(mod.GetTeam(GAMEMODE_CONFIG.team1ID));
-  const team2Score = mod.GetGameModeScore(mod.GetTeam(GAMEMODE_CONFIG.team2ID));
-
-  mod.SetScoreboardHeader(
-    mod.Message(mod.stringkeys.SCOREBOARD_HEADER, team1Score),
-    mod.Message(mod.stringkeys.SCOREBOARD_HEADER, team2Score)
-  );
 }
 
 const updateScoreboard = (player: mod.Player, playerStats: PlayerStats) => {
