@@ -1,77 +1,121 @@
-//#region Types
-
+/** GameMode config */
 interface GameModeConfig {
+  /** Amount of kills to reach to win */
   score: number;
+
+  /** Time in seconds + freeze time */
   timeLimit: number;
+
+  /** Seconds of freeze time at round start */
   freezeTime: number;
+
+  /** How many kills to trigger mid progress VO */
   progressStageEarly: number;
+
+  /** How many kills to trigger mid progress VO */
   progressStageMid: number;
+
+  /** How many kills to trigger late progress VO */
   progressStageLate: number;
+
+  /** Godot ID for the Team 1 */
   team1ID: number;
+
+  /** Godot ID for the Team 2 */
   team2ID: number;
+
+  /** Godot ID for the Team 1 HQ */
   hqRoundStartTeam1: number;
+
+  /** Godot ID for the Team 2 HQ */
   hqRoundStartTeam2: number;
-  maxStartingAmmo: boolean;
-  startSpawnPointID: number;
+
+  /**
+   * Starting ID for spawn point SpatialObjects.
+   *
+   * Your spawners need to be a SpatialObject (any object that is an actual prop) in incremental IDs starting from startSpawnPointID or they'll not be parsed
+   */
+  startSpawnPointID: number | null;
+
+  /** Amount of additional damage for snipers */
+  sniperAdditionalDamage: number;
+
+  /** The close range sweetspot max distance between 0-Xm */
+  sniperMaxDistanceToHitKill: number;
 }
 
+/** Player stats for the scoreboard */
 interface PlayerStats {
+  /** Amount of player kills */
   k: number;
+
+  /** Amount of player deaths */
   d: number;
+
+  /** Amount of player assists */
   a: number;
+
+  /** Amount of player kills with headshot */
   hs: number;
 }
 
-//#endregion
+const SNIPERS: mod.Weapons[] = [
+  mod.Weapons.Sniper_M2010_ESR,
+  mod.Weapons.Sniper_PSR,
+  mod.Weapons.Sniper_SV_98,
+  (mod as any)?.Weapons.Sniper_Mini_Scout
+];
 
-//#region Config
+const RESTRICTED_GADGETS: mod.Gadgets[] = [
+  mod.Gadgets.Misc_Assault_Ladder,
+  mod.Gadgets.Misc_Incendiary_Round_Shotgun,
+  mod.Gadgets.Launcher_Thermobaric_Grenade,
+  mod.Gadgets.Launcher_Long_Range,
+  mod.Gadgets.Launcher_High_Explosive,
+  mod.Gadgets.Deployable_Cover,
+];
 
-/* Mode config - Only modify what's inside this object */
 const GAMEMODE_CONFIG: GameModeConfig = {
-  score: 75, // 75 kills to win
-  freezeTime: 15, // Seconds of freeze time at round start
-  timeLimit: 10 * 60 + 15, // 10 minutes + freeze time
-  progressStageEarly: 20, // How many kills to trigger early progress VO
-  progressStageMid: 40, // How many kills to trigger mid progress VO
-  progressStageLate: 65, // How many kills to trigger late progress VO
+  score: 200,
+  freezeTime: 0,
+  timeLimit: 40 * 60,
+  progressStageEarly: 50,
+  progressStageMid: 100,
+  progressStageLate: 175,
   team1ID: 1,
   team2ID: 2,
-  // Beginning HQs - place these in Godot where players spawn at match start
   hqRoundStartTeam1: 1,
   hqRoundStartTeam2: 2,
-  maxStartingAmmo: true,
-  startSpawnPointID: 9001, // Starting ID for spawn point SpatialObjects. Your spawners need to be a SpatialObject (any object that is an actual prop) in incremental IDs starting from startSpawnPointID or they'll not be parsed
+  startSpawnPointID: null,
+  sniperAdditionalDamage: 100,
+  sniperMaxDistanceToHitKill: 20
 };
 
-//#endregion
-
-//#region Variables
-
-const UIWIDGET_TIMER_BEGINNING_ID = "UIWidgetTimerBeginning";
-const UIWIDGET_TIMER_BEGINNING_TEXT_ID = "UIWidgetTimerBeginningText";
-const UIWIDGET_SCORE_CONTAINER_ID = "UIWidgetContainer";
-const UIWIDGET_SCORE_TIMER_ID = "UIWidgetTimer";
-const UIWIDGET_SCORE_SEPARATOR_ID = "UIWidgetSeparator";
-const UIWIDGET_SCORE_TEAM1_SCORE_ID = "UiWidgetTeam1Score";
-const UIWIDGET_SCORE_TEAM1_NAME_ID = "UiWidgetTeam1Name";
-const UIWIDGET_SCORE_TEAM2_SCORE_ID = "UiWidgetTeam2Score";
-const UIWIDGET_SCORE_TEAM2_NAME_ID = "UiWidgetTeam2Name";
-const UIWIDGET_SCORE_FIRSTTO_ID = "UiWidgetFirstTo";
+const UIWIDGET_TIMER_BEGINNING_ID: string = "UIWidgetTimerBeginning";
+const UIWIDGET_TIMER_BEGINNING_TEXT_ID: string = "UIWidgetTimerBeginningText";
+const UIWIDGET_SCORE_CONTAINER_ID: string = "UIWidgetContainer";
+const UIWIDGET_SCORE_TIMER_ID: string = "UIWidgetTimer";
+const UIWIDGET_SCORE_SEPARATOR_ID: string = "UIWidgetSeparator";
+const UIWIDGET_SCORE_TEAM1_SCORE_ID: string = "UiWidgetTeam1Score";
+const UIWIDGET_SCORE_TEAM1_NAME_ID: string = "UiWidgetTeam1Name";
+const UIWIDGET_SCORE_TEAM2_SCORE_ID: string = "UiWidgetTeam2Score";
+const UIWIDGET_SCORE_TEAM2_NAME_ID: string = "UiWidgetTeam2Name";
+const UIWIDGET_SCORE_FIRSTTO_ID: string = "UiWidgetFirstTo";
 
 const spawners: mod.Vector[] = [];
 
 const playersStats: { [id: number]: PlayerStats } = {};
 
-let gameStarted = false;
-let gameEnded = false;
+let gameStarted: boolean = false;
+let gameEnded: boolean = false;
 
 let leaderTeam: mod.Team | null = null;
 
-let tick = 0;
+let tick: number = 0;
 
-let hasPlayedTime120LeftVO = false;
-let hasPlayedTime30LeftVO = false;
-let hasPlayedTime60LeftVO = false;
+let hasPlayedTime120LeftVO: boolean = false;
+let hasPlayedTime30LeftVO: boolean = false;
+let hasPlayedTime60LeftVO: boolean = false;
 
 const winProgressStages = {
   [GAMEMODE_CONFIG.progressStageEarly]: {
@@ -91,10 +135,6 @@ const winProgressStages = {
   },
 };
 
-//#endregion
-
-//#region Audio Helpers
-
 function playSFX(sfxId: mod.RuntimeSpawn_Common) {
   const sfx = mod.SpawnObject(
     sfxId,
@@ -103,7 +143,7 @@ function playSFX(sfxId: mod.RuntimeSpawn_Common) {
     mod.CreateVector(0, 0, 0)
   );
 
-  mod.EnableSFX(sfx, true);
+  mod.EnableVFX(sfx, true);
   mod.PlaySound(sfx, 100);
 }
 
@@ -124,9 +164,7 @@ function playVO(vo: mod.VoiceOverEvents2D, team?: any) {
 function playProgressSFX(team1: mod.Team, team2: mod.Team) {
   const team1Score = mod.GetGameModeScore(team1);
   const team2Score = mod.GetGameModeScore(team2);
-  if (team1Score === team2Score) {
-    return;
-  }
+  if (team1Score === team2Score) return;
 
   const isTeam1Winning = team1Score > team2Score;
   const winningTeam = isTeam1Winning ? team1 : team2;
@@ -135,6 +173,7 @@ function playProgressSFX(team1: mod.Team, team2: mod.Team) {
 
   const stage =
     winProgressStages[winningTeamScore as keyof typeof winProgressStages];
+
   if (stage && !stage.hasPlayed) {
     playVO(stage.winning, winningTeam);
     playVO(stage.losing, losingTeam);
@@ -143,6 +182,7 @@ function playProgressSFX(team1: mod.Team, team2: mod.Team) {
 
   if (leaderTeam === null || !mod.Equals(winningTeam, leaderTeam)) {
     leaderTeam = winningTeam;
+
     if (!stage) {
       playVO(mod.VoiceOverEvents2D.ProgressMidWinning, winningTeam);
       playVO(mod.VoiceOverEvents2D.ProgressMidLosing, losingTeam);
@@ -150,15 +190,10 @@ function playProgressSFX(team1: mod.Team, team2: mod.Team) {
   }
 }
 
-//#endregion
-
-//#region Spawn Point Helpers
-
-function getFurthestSpawnPointFromEnemies(
-  respawnedPlayer: mod.Player
-): mod.Vector {
+function getFurthestSpawnPointFromEnemies(respawnedPlayer: mod.Player): mod.Vector | null {
   const players = mod.AllPlayers();
   const spawnsMap: { distance: number; spawnPoint: mod.Vector }[] = [];
+  if (spawners.length === 0) return null;
 
   let furthestSpawnPoint = spawners[0];
   let furthestSpawnPointDistance = 0;
@@ -172,14 +207,13 @@ function getFurthestSpawnPointFromEnemies(
       if (
         mod.GetSoldierState(player, mod.SoldierStateBool.IsDead) ||
         mod.Equals(mod.GetTeam(player), mod.GetTeam(respawnedPlayer))
-      ) {
-        continue;
-      }
+      ) continue;
 
       const playerVector = mod.GetSoldierState(
         player,
         mod.SoldierStateVector.GetPosition
       );
+
       const distanceBetween = mod.DistanceBetween(
         spawnPointVector,
         playerVector
@@ -192,10 +226,12 @@ function getFurthestSpawnPointFromEnemies(
       spawnPoint: spawnPointVector,
       distance: nearestPlayerDistance,
     });
+
     if (furthestSpawnPointDistance < nearestPlayerDistance) {
       furthestSpawnPointDistance = nearestPlayerDistance;
     }
   }
+
   const availableSpawns = spawnsMap.filter(
     ({ distance }) => distance >= furthestSpawnPointDistance * 0.8
   );
@@ -212,6 +248,8 @@ function getFurthestSpawnPointFromEnemies(
 
 function createSpawnPoints() {
   let spawnPointId = GAMEMODE_CONFIG.startSpawnPointID;
+  if (!spawnPointId) return;
+
   do {
     const spawnPoint = mod.GetSpatialObject(spawnPointId); // Even with an invalid ID it returns a SpawnObject so we have to check it by "hand"
     const spawnPointPosition = mod.GetObjectPosition(spawnPoint);
@@ -219,23 +257,19 @@ function createSpawnPoints() {
     const spawnPointY = mod.YComponentOf(spawnPointPosition);
     const spawnPointZ = mod.ZComponentOf(spawnPointPosition);
 
-    if (spawnPointY === 0 && spawnPointZ === 0) {
-      // Better check for invalid spawn points - Y and Z being exactly 0 typically indicates invalid position
-      break;
-    }
+    // Better check for invalid spawn points - Y and Z being exactly 0 typically indicates invalid position
+    if (spawnPointY === 0 && spawnPointZ === 0) break;
 
     spawners.push(mod.CreateVector(spawnPointX, spawnPointY, spawnPointZ));
     mod.MoveObject(spawnPoint, mod.CreateVector(-100, -100, -100)); // Because EnableSpatial and Unspawn don't work...
+
     spawnPointId++;
   } while (spawnPointId);
 }
 
-//#endregion
-
-//#region Scoreboard Helpers
-
 function createScoreboard() {
   mod.SetScoreboardType(mod.ScoreboardType.CustomTwoTeams);
+
   mod.SetScoreboardColumnNames(
     mod.Message(mod.stringkeys.SCOREBOARD_COLUMN1_HEADER),
     mod.Message(mod.stringkeys.SCOREBOARD_COLUMN2_HEADER),
@@ -250,23 +284,25 @@ function createScoreboard() {
   );
 
   mod.SetScoreboardColumnWidths(100, 100, 100, 250, 250);
+
   // BUG
   // scoreboard sorting using the two parameter overload is 0-based index but documented as 1-based index
   // scoreboard sorting using the single parameter overload is 1-based index
   mod.SetScoreboardSorting(0, false); // Sort by kills descending
-  updateScoreboardHeader();
+
   const allPlayers = mod.AllPlayers();
+
   for (let i = 0; i < mod.CountOf(allPlayers); i++) {
     const player: mod.Player = mod.ValueInArray(allPlayers, i);
     const playerId = mod.GetObjId(player);
+
     updateScoreboard(player, playersStats[playerId]);
   }
 }
 
 const updateScoreboard = (player: mod.Player, playerStats: PlayerStats) => {
-  if (!playerStats) {
-    return;
-  }
+  if (!playerStats) return;
+
   mod.SetScoreboardPlayerValues(
     player,
     playerStats.k,
@@ -276,10 +312,6 @@ const updateScoreboard = (player: mod.Player, playerStats: PlayerStats) => {
     playerStats.k > 0 ? Math.floor((playerStats.hs / playerStats.k) * 100) : 0 // HS% calculation
   );
 };
-
-//#endregion
-
-//#region Beginning Timer UI
 
 function createBeginningTimer() {
   mod.AddUIContainer(
@@ -294,9 +326,8 @@ function createBeginningTimer() {
     0.9,
     mod.UIBgFill.OutlineThin
   );
-  const UITimerBeginningContainer = mod.FindUIWidgetWithName(
-    UIWIDGET_TIMER_BEGINNING_ID
-  );
+
+  const UITimerBeginningContainer = mod.FindUIWidgetWithName(UIWIDGET_TIMER_BEGINNING_ID);
 
   mod.AddUIText(
     UIWIDGET_TIMER_BEGINNING_TEXT_ID,
@@ -321,13 +352,8 @@ function createBeginningTimer() {
   );
 }
 
-function updateBeginningTimer(
-  remainingSeconds: number,
-  remainingMilliseconds: number
-) {
-  const timerBeginningWidgetText = mod.FindUIWidgetWithName(
-    UIWIDGET_TIMER_BEGINNING_TEXT_ID
-  );
+function updateBeginningTimer(remainingSeconds: number, remainingMilliseconds: number) {
+  const timerBeginningWidgetText = mod.FindUIWidgetWithName(UIWIDGET_TIMER_BEGINNING_TEXT_ID);
 
   if (timerBeginningWidgetText) {
     const message =
@@ -344,17 +370,12 @@ function updateBeginningTimer(
 }
 
 function deleteTimerWidget() {
-  const timerBeginningWidget = mod.FindUIWidgetWithName(
-    UIWIDGET_TIMER_BEGINNING_ID
-  );
+  const timerBeginningWidget = mod.FindUIWidgetWithName(UIWIDGET_TIMER_BEGINNING_ID);
+
   if (timerBeginningWidget) {
     mod.DeleteUIWidget(timerBeginningWidget);
   }
 }
-
-//#endregion
-
-//#region Score UI
 
 function createUIScore() {
   mod.AddUIContainer(
@@ -369,9 +390,8 @@ function createUIScore() {
     0.9,
     mod.UIBgFill.Blur
   );
-  const UIScoreContainer = mod.FindUIWidgetWithName(
-    UIWIDGET_SCORE_CONTAINER_ID
-  );
+
+  const UIScoreContainer = mod.FindUIWidgetWithName(UIWIDGET_SCORE_CONTAINER_ID);
 
   mod.AddUIText(
     UIWIDGET_SCORE_TIMER_ID,
@@ -408,6 +428,7 @@ function createUIScore() {
     1,
     mod.UIAnchor.Center
   );
+
   mod.AddUIText(
     UIWIDGET_SCORE_TEAM1_NAME_ID,
     mod.CreateVector(0, 5, 0),
@@ -425,6 +446,7 @@ function createUIScore() {
     1,
     mod.UIAnchor.Center
   );
+
   mod.AddUIText(
     UIWIDGET_SCORE_SEPARATOR_ID,
     mod.CreateVector(0, 10, 0),
@@ -442,6 +464,7 @@ function createUIScore() {
     1,
     mod.UIAnchor.Center
   );
+
   mod.AddUIText(
     UIWIDGET_SCORE_TEAM2_SCORE_ID,
     mod.CreateVector(0, 0, 0),
@@ -459,6 +482,7 @@ function createUIScore() {
     1,
     mod.UIAnchor.Center
   );
+
   mod.AddUIText(
     UIWIDGET_SCORE_TEAM2_NAME_ID,
     mod.CreateVector(0, 5, 0),
@@ -476,6 +500,7 @@ function createUIScore() {
     1,
     mod.UIAnchor.Center
   );
+
   mod.AddUIText(
     UIWIDGET_SCORE_FIRSTTO_ID,
     mod.CreateVector(0, 1, 0),
@@ -499,17 +524,14 @@ function updateUIScore() {
   const team1Score = mod.GetGameModeScore(mod.GetTeam(GAMEMODE_CONFIG.team1ID));
   const team2Score = mod.GetGameModeScore(mod.GetTeam(GAMEMODE_CONFIG.team2ID));
 
-  const team1UIScoreWidget = mod.FindUIWidgetWithName(
-    UIWIDGET_SCORE_TEAM1_SCORE_ID
-  );
-  const team2UIScoreWidget = mod.FindUIWidgetWithName(
-    UIWIDGET_SCORE_TEAM2_SCORE_ID
-  );
+  const team1UIScoreWidget = mod.FindUIWidgetWithName(UIWIDGET_SCORE_TEAM1_SCORE_ID);
+  const team2UIScoreWidget = mod.FindUIWidgetWithName(UIWIDGET_SCORE_TEAM2_SCORE_ID);
 
   mod.SetUITextLabel(
     team1UIScoreWidget,
     mod.Message(mod.stringkeys.UISCORE_POINTS, team1Score)
   );
+
   mod.SetUITextLabel(
     team2UIScoreWidget,
     mod.Message(mod.stringkeys.UISCORE_POINTS, team2Score)
@@ -523,6 +545,7 @@ function updateTimerText(
   remainingMilliseconds: number
 ) {
   const timerWidget = mod.FindUIWidgetWithName(UIWIDGET_SCORE_TIMER_ID);
+
   if (timerWidget) {
     if (remainingTime < 60) {
       mod.SetUITextColor(timerWidget, mod.CreateVector(0.9, 0, 0));
@@ -558,28 +581,27 @@ function updateTimerText(
 }
 
 function deleteUIScore() {
-  const scoreContainerWidget = mod.FindUIWidgetWithName(
-    UIWIDGET_SCORE_CONTAINER_ID
-  );
+  const scoreContainerWidget = mod.FindUIWidgetWithName(UIWIDGET_SCORE_CONTAINER_ID);
+
   if (scoreContainerWidget) {
     mod.DeleteUIWidget(scoreContainerWidget);
   }
 }
 
-//#endregion
-
-//#region Game State Helpers
+function removeGadget(player: mod.Player, gadget: mod.Gadgets) {
+  if (mod.HasEquipment(player, gadget)) {
+    mod.RemoveEquipment(player, gadget);
+  }
+}
 
 async function endGame(winningTeam: mod.Team, losingTeam: mod.Team) {
   gameEnded = true;
+
   deleteUIScore();
   mod.EnableAllPlayerDeploy(false);
+
   await mod.Wait(5);
 }
-
-//#endregion
-
-//#region Game Event Handlers
 
 export async function OnGameModeStarted() {
   createSpawnPoints();
@@ -587,48 +609,73 @@ export async function OnGameModeStarted() {
   createBeginningTimer();
 
   mod.SetGameModeTargetScore(GAMEMODE_CONFIG.score);
-  mod.SetGameModeTimeLimit(GAMEMODE_CONFIG.timeLimit);
-  createScoreboard();
+  mod.SetGameModeTimeLimit(GAMEMODE_CONFIG.timeLimit + GAMEMODE_CONFIG.freezeTime);
 
+  createScoreboard();
   await mod.Wait(GAMEMODE_CONFIG.freezeTime);
+
   gameStarted = true;
+
   playVO(mod.VoiceOverEvents2D.RoundStartGeneric);
   deleteTimerWidget();
 }
 
 export function OnPlayerJoinGame(eventPlayer: mod.Player) {
-  mod.SetRedeployTime(eventPlayer, 0);
   const playerId = mod.GetObjId(eventPlayer);
+  mod.SetRedeployTime(eventPlayer, 0);
+
   playersStats[playerId] = {
     k: 0,
     d: 0,
     a: 0,
     hs: 0,
   };
+
   updateScoreboard(eventPlayer, playersStats[playerId]);
 }
 
 export function OnPlayerDeployed(eventPlayer: mod.Player) {
   if (gameStarted) {
-    mod.Teleport(eventPlayer, getFurthestSpawnPointFromEnemies(eventPlayer), 0);
-  }
+    const furthestSpawnPoint = getFurthestSpawnPointFromEnemies(eventPlayer);
 
-  if (GAMEMODE_CONFIG.maxStartingAmmo) {
-    mod.SetInventoryMagazineAmmo(
-      eventPlayer,
-      mod.InventorySlots.PrimaryWeapon,
-      9999
-    );
-    mod.SetInventoryMagazineAmmo(
-      eventPlayer,
-      mod.InventorySlots.SecondaryWeapon,
-      9999
-    );
+    if (furthestSpawnPoint) {
+      mod.Teleport(eventPlayer, furthestSpawnPoint, 0);
+    }
+
+    for (const gadget of RESTRICTED_GADGETS) {
+      removeGadget(eventPlayer, gadget);
+    }
   }
 }
 
 export function OnPlayerLeaveGame(eventNumber: number) {
   delete playersStats[eventNumber];
+}
+
+export function OnPlayerDamaged(
+  eventPlayer: mod.Player,
+  eventOtherPlayer: mod.Player,
+  eventDamageType: mod.DamageType,
+  eventWeaponUnlock: mod.WeaponUnlock
+) {
+  if (mod.EventDamageTypeCompare(eventDamageType, mod.PlayerDamageTypes.Default)) {
+    if (mod.IsInventorySlotActive(eventPlayer, mod.InventorySlots.PrimaryWeapon)) {
+      let hasSniper = false;
+
+      for (const weapon of SNIPERS) {
+        hasSniper = mod.HasEquipment(eventPlayer, weapon);
+        if (hasSniper) break;
+      }
+
+      const eventPlayerVector = mod.GetSoldierState(eventPlayer, mod.SoldierStateVector.GetPosition);
+      const eventOtherPlayerVector = mod.GetSoldierState(eventOtherPlayer, mod.SoldierStateVector.GetPosition);
+      const distanceBetween = mod.DistanceBetween(eventPlayerVector, eventOtherPlayerVector);
+
+      if (hasSniper && (distanceBetween >= 0 && distanceBetween <= GAMEMODE_CONFIG.sniperMaxDistanceToHitKill)) {
+        mod.DealDamage(eventPlayer, GAMEMODE_CONFIG.sniperAdditionalDamage, eventOtherPlayer);
+      }
+    }
+  }
 }
 
 export function OnPlayerEarnedKill(
@@ -642,9 +689,8 @@ export function OnPlayerEarnedKill(
     mod.EventDeathTypeCompare(eventDeathType, mod.PlayerDeathTypes.Drowning) ||
     mod.EventDeathTypeCompare(eventDeathType, mod.PlayerDeathTypes.Redeploy) ||
     mod.Equals(eventPlayer, eventOtherPlayer)
-  ) {
-    return;
-  }
+  ) return;
+
   const playerId = mod.GetObjId(eventPlayer);
   const playerTeam = mod.GetTeam(eventPlayer);
   const otherPlayerTeam = mod.GetTeam(eventOtherPlayer);
@@ -658,9 +704,10 @@ export function OnPlayerEarnedKill(
     : 0;
 
   mod.SetGameModeScore(playerTeam, mod.GetGameModeScore(playerTeam) + 1);
+
   updateScoreboard(eventPlayer, playersStats[playerId]);
-  updateScoreboardHeader();
   updateUIScore();
+
   if (mod.GetGameModeScore(playerTeam) >= GAMEMODE_CONFIG.score) {
     // because the gamemode end doesn't actually end at the score, we have to trigger that "manually"
     endGame(playerTeam, otherPlayerTeam);
@@ -669,24 +716,19 @@ export function OnPlayerEarnedKill(
   }
 }
 
-export function OnPlayerEarnedKillAssist(
-  eventPlayer: mod.Player,
-  eventOtherPlayer: mod.Player
-) {
+export function OnPlayerEarnedKillAssist(eventPlayer: mod.Player, eventOtherPlayer: mod.Player) {
   const playerId = mod.GetObjId(eventPlayer);
+
   playersStats[playerId].a++;
   updateScoreboard(eventPlayer, playersStats[playerId]);
 }
 
 export function OnPlayerUndeploy(eventPlayer: mod.Player) {
   const eventPlayerId = mod.GetObjId(eventPlayer);
+
   playersStats[eventPlayerId].d++;
   updateScoreboard(eventPlayer, playersStats[eventPlayerId]);
 }
-
-//#endregion
-
-//#region Loop Handlers
 
 export function OngoingPlayer(eventPlayer: mod.Player) {
   if (!mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsDead)) {
@@ -700,6 +742,7 @@ export function OngoingPlayer(eventPlayer: mod.Player) {
 
 export function OngoingGlobal() {
   tick++; // ONLY increment tick here
+
   const remainingTime = Math.floor(mod.GetMatchTimeRemaining());
   const remainingMinutes = Math.floor(remainingTime / 60);
   const remainingSeconds = remainingTime % 60;
@@ -734,5 +777,3 @@ export function OngoingGlobal() {
     remainingMilliseconds
   );
 }
-
-//#endregion
