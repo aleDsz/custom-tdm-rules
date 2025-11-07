@@ -68777,6 +68777,370 @@
                 "z": -477.296
             },
             "id": "RetainingWall_25"
+        },
+        {
+            "name": "Bottle_01_C_1",
+            "ObjId": 9001,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -296.32,
+                "y": 53.43,
+                "z": -599.87
+            },
+            "id": "SpawnPoints/Bottle_01_C_1"
+        },
+        {
+            "name": "Bottle_01_C_2",
+            "ObjId": 9002,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -297.44,
+                "y": 53.42,
+                "z": -575.7
+            },
+            "id": "SpawnPoints/Bottle_01_C_2"
+        },
+        {
+            "name": "Bottle_01_C_3",
+            "ObjId": 9003,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -295.19,
+                "y": 53.45,
+                "z": -627.0
+            },
+            "id": "SpawnPoints/Bottle_01_C_3"
+        },
+        {
+            "name": "Bottle_01_C_4",
+            "ObjId": 9004,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -266.18,
+                "y": 53.44,
+                "z": -625.5
+            },
+            "id": "SpawnPoints/Bottle_01_C_4"
+        },
+        {
+            "name": "Bottle_01_C_5",
+            "ObjId": 9005,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -220.66,
+                "y": 50.82,
+                "z": -594.1
+            },
+            "id": "SpawnPoints/Bottle_01_C_5"
+        },
+        {
+            "name": "Bottle_01_C_6",
+            "ObjId": 9006,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -217.03,
+                "y": 50.82,
+                "z": -563.1
+            },
+            "id": "SpawnPoints/Bottle_01_C_6"
+        },
+        {
+            "name": "Bottle_01_C_7",
+            "ObjId": 9007,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -226.78,
+                "y": 51.97,
+                "z": -534.4
+            },
+            "id": "SpawnPoints/Bottle_01_C_7"
+        },
+        {
+            "name": "Bottle_01_C_8",
+            "ObjId": 9008,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -258.56,
+                "y": 53.42,
+                "z": -529.5
+            },
+            "id": "SpawnPoints/Bottle_01_C_8"
+        },
+        {
+            "name": "Bottle_01_C_9",
+            "ObjId": 9009,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -289.76,
+                "y": 53.42,
+                "z": -527.3
+            },
+            "id": "SpawnPoints/Bottle_01_C_9"
+        },
+        {
+            "name": "Bottle_01_C_10",
+            "ObjId": 9010,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -297.28,
+                "y": 56.98,
+                "z": -511.7
+            },
+            "id": "SpawnPoints/Bottle_01_C_10"
+        },
+        {
+            "name": "Bottle_01_C_11",
+            "ObjId": 9011,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -262.02,
+                "y": 56.98,
+                "z": -518.0
+            },
+            "id": "SpawnPoints/Bottle_01_C_11"
+        },
+        {
+            "name": "Bottle_01_C_12",
+            "ObjId": 9012,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -282.06,
+                "y": 53.42,
+                "z": -551.4
+            },
+            "id": "SpawnPoints/Bottle_01_C_12"
+        },
+        {
+            "name": "Bottle_01_C_13",
+            "ObjId": 9013,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -285.37,
+                "y": 53.57,
+                "z": -547.3
+            },
+            "id": "SpawnPoints/Bottle_01_C_13"
+        },
+        {
+            "name": "Bottle_01_C_14",
+            "ObjId": 9014,
+            "type": "Bottle_01_C",
+            "right": {
+                "x": 0.1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 0.1
+            },
+            "position": {
+                "x": -283.96,
+                "y": 53.42,
+                "z": -564.2
+            },
+            "id": "SpawnPoints/Bottle_01_C_14"
         }
     ],
     "Static": [

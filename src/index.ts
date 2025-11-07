@@ -35,7 +35,7 @@ interface GameModeConfig {
    *
    * Your spawners need to be a SpatialObject (any object that is an actual prop) in incremental IDs starting from startSpawnPointID or they'll not be parsed
    */
-  startSpawnPointID: number | null;
+  startSpawnPointID: number;
 
   /** Amount of additional damage for snipers */
   sniperAdditionalDamage: number;
@@ -86,7 +86,7 @@ const GAMEMODE_CONFIG: GameModeConfig = {
   team2ID: 2,
   hqRoundStartTeam1: 1,
   hqRoundStartTeam2: 2,
-  startSpawnPointID: null,
+  startSpawnPointID: 9001,
   sniperAdditionalDamage: 100,
   sniperMaxDistanceToHitKill: 20
 };
