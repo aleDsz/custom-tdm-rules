@@ -88,7 +88,7 @@ const GAMEMODE_CONFIG: GameModeConfig = {
   hqRoundStartTeam2: 2,
   startSpawnPointID: 9001,
   sniperAdditionalDamage: 100,
-  sniperMaxDistanceToHitKill: 20
+  sniperMaxDistanceToHitKill: 40
 };
 
 const UIWIDGET_TIMER_BEGINNING_ID: string = "UIWidgetTimerBeginning";
@@ -658,18 +658,14 @@ export function OnPlayerDamaged(
   eventDamageType: mod.DamageType,
   eventWeaponUnlock: mod.WeaponUnlock
 ) {
+  const eventPlayerVector = mod.GetSoldierState(eventPlayer, mod.SoldierStateVector.GetPosition);
+  const eventOtherPlayerVector = mod.GetSoldierState(eventOtherPlayer, mod.SoldierStateVector.GetPosition);
+  const distanceBetween = Math.trunc(mod.DistanceBetween(eventPlayerVector, eventOtherPlayerVector));
+
   if (mod.EventDamageTypeCompare(eventDamageType, mod.PlayerDamageTypes.Default)) {
+
     if (mod.IsInventorySlotActive(eventPlayer, mod.InventorySlots.PrimaryWeapon)) {
-      let hasSniper = false;
-
-      for (const weapon of SNIPERS) {
-        hasSniper = mod.HasEquipment(eventPlayer, weapon);
-        if (hasSniper) break;
-      }
-
-      const eventPlayerVector = mod.GetSoldierState(eventPlayer, mod.SoldierStateVector.GetPosition);
-      const eventOtherPlayerVector = mod.GetSoldierState(eventOtherPlayer, mod.SoldierStateVector.GetPosition);
-      const distanceBetween = mod.DistanceBetween(eventPlayerVector, eventOtherPlayerVector);
+      let hasSniper: boolean = SNIPERS.filter(value => mod.HasEquipment(eventOtherPlayer, value)).length > 0;
 
       if (hasSniper && (distanceBetween >= 0 && distanceBetween <= GAMEMODE_CONFIG.sniperMaxDistanceToHitKill)) {
         mod.DealDamage(eventPlayer, GAMEMODE_CONFIG.sniperAdditionalDamage, eventOtherPlayer);
