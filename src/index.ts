@@ -1,3 +1,5 @@
+import * as modlib from 'modlib';
+
 /** GameMode config */
 interface GameModeConfig {
   /** Amount of kills to reach to win */
