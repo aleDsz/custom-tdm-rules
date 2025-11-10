@@ -665,6 +665,7 @@ export function OnPlayerDamaged(
   const distanceBetween = Math.trunc(mod.DistanceBetween(eventPlayerVector, eventOtherPlayerVector));
 
   if (mod.EventDamageTypeCompare(eventDamageType, mod.PlayerDamageTypes.Default)) {
+    mod.SpotTarget(eventOtherPlayer, eventPlayer, 1, mod.SpotStatus.SpotInBoth);
 
     if (mod.IsInventorySlotActive(eventPlayer, mod.InventorySlots.PrimaryWeapon)) {
       let hasSniper: boolean = SNIPERS.filter(value => mod.HasEquipment(eventOtherPlayer, value)).length > 0;
