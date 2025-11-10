@@ -602,6 +602,11 @@ async function endGame(winningTeam: mod.Team, losingTeam: mod.Team) {
   deleteUIScore();
   mod.EnableAllPlayerDeploy(false);
 
+  // Clean all the playerStats;
+  for (const playerId in playersStats) {
+    delete playersStats[playerId];
+  }
+
   await mod.Wait(5);
 }
 
@@ -626,12 +631,15 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player) {
   const playerId = mod.GetObjId(eventPlayer);
   mod.SetRedeployTime(eventPlayer, 0);
 
-  playersStats[playerId] = {
-    k: 0,
-    d: 0,
-    a: 0,
-    hs: 0,
-  };
+  // Only creates the player stats if it doesn't already have one
+  if (!playersStats[playerId]) {
+    playersStats[playerId] = {
+      k: 0,
+      d: 0,
+      a: 0,
+      hs: 0,
+    };
+  }
 
   updateScoreboard(eventPlayer, playersStats[playerId]);
 }
@@ -648,10 +656,6 @@ export function OnPlayerDeployed(eventPlayer: mod.Player) {
       removeGadget(eventPlayer, gadget);
     }
   }
-}
-
-export function OnPlayerLeaveGame(eventNumber: number) {
-  delete playersStats[eventNumber];
 }
 
 export function OnPlayerDamaged(
